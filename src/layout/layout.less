@@ -1,0 +1,838 @@
+@import 'variables';
+@import 'vendor-prefixes';
+//
+// Forms
+// --------------------------------------------------
+
+// Normalize non-controls
+//
+// Restyle and baseline non-control form elements.
+
+.bh-form-label {
+    display: inline-block;
+    max-width: 100%; // Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141)
+    font-weight: @form-label-font-weight;
+    font-size: @form-label-font-size;
+    padding: @form-label-padding;
+    text-align: @form-label-text-align;
+    color: @form-label-color;
+}
+
+// Focus for file, radio, and checkbox
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+    // .tab-focus();
+}
+
+// Common form controls
+//
+// Shared size and type resets for form controls. Apply `.form-control` to any
+// of the following form controls:
+//
+// select
+// textarea
+// input[type="text"]
+// input[type="password"]
+// input[type="datetime"]
+// input[type="datetime-local"]
+// input[type="date"]
+// input[type="month"]
+// input[type="time"]
+// input[type="week"]
+// input[type="number"]
+// input[type="email"]
+// input[type="url"]
+// input[type="search"]
+// input[type="tel"]
+// input[type="color"]
+
+.bh-form-control {
+    display: block;
+    width: 100%;
+    height: @input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
+    padding: @input-padding-base;
+    font-size: @input-font-size;
+    line-height: @input-line-height-base;
+    color: @input-color-base;
+    background-color: @input-bg;
+    background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+    border: 1px solid @input-border-color;
+    border-radius: @input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
+    //.box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+    //.transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
+
+    // Customize the `:focus` state to imitate native WebKit styles.
+    //.form-control-focus();
+    &[type=text] {
+        line-height: 28px;
+    }
+
+    &:focus {
+        border-color: @brand-primary;
+        outline: 0;
+        .box-shadow(~"inset 0 0 2px @{brand-primary}");
+    }
+
+    // Placeholder
+    .placeholder();
+
+    // Disabled and read-only inputs
+    //
+    // HTML5 says that controls under a fieldset > legend:first-child won't be
+    // disabled if the fieldset is disabled. Due to implementation difficulty, we
+    // don't honor that edge case; we style them as disabled anyway.
+    &[disabled],
+    &[readonly],
+    fieldset[disabled] & {
+        background-color: @gray-lv5;
+        opacity: 1; // iOS fix for unreadable disabled content; see https://github.com/twbs/bootstrap/issues/11655
+        color: @gray-lv3;
+    }
+
+    &[disabled],
+    fieldset[disabled] & {
+        cursor: @cursor-disabled;
+    }
+}
+
+textarea.bh-form-control{
+  height: auto;
+}
+
+// Search inputs in iOS
+//
+// This overrides the extra rounded corners on search inputs in iOS so that our
+// `.form-control` class can properly style them. Note that this cannot simply
+// be added to `.form-control` as it's not specific enough. For details, see
+// https://github.com/twbs/bootstrap/issues/11586.
+
+input[type="search"] {
+    -webkit-appearance: none;
+}
+.bh-simple-search{
+  position: relative;
+  input[type='text']{
+    padding-left: 29px;
+  }
+  a {
+    position: absolute;
+    top: 5px;
+    left: 6px;
+    color: @gray-lv2;
+    i{
+      font-size: 18px;
+    }
+  }
+}
+// Form groups
+//
+// Designed to help with the organization and spacing of vertical forms. For
+// horizontal forms, use the predefined grid classes.
+
+.bh-form-group {
+    margin-bottom: @form-group-margin-bottom;
+    &.bh-required {
+        .bh-form-label:before {
+            content: "*";
+            position: absolute;
+            color: @brand-danger;
+            line-height:28px;
+            left: 4px;
+        }
+    }
+
+    & .bh-text-caption {
+        display: none;
+    }
+}
+
+.bh-input-lg {
+    .input-size(@input-height-large; @input-padding-base; @input-padding-base; @input-font-size-large; @input-line-height-large; @input-border-radius);
+}
+
+.bh-form-group-lg {
+    .bh-form-control {
+        .input-size(@input-height-large; @input-padding-base; @input-padding-base; @input-font-size-large; @input-line-height-large; @input-border-radius);
+    }
+    .bh-form-label {
+        font-size: @form-label-font-size-lg;
+        padding: @form-label-padding-lg;
+        margin-right: 0;
+    }
+    .bh-form-group {
+        margin-bottom: @form-group-margin-bottom-lg;
+    }
+}
+
+.form-control-validation(@text-color; @border-color; @background-color) {
+    // Color the label and help text
+    .help-block,
+    .control-label,
+    .radio,
+    .checkbox,
+    .radio-inline,
+    .checkbox-inline,
+    &.radio label,
+    &.checkbox label,
+    &.radio-inline label,
+    &.checkbox-inline label {
+        color: @text-color;
+    }
+    // Set the border and box shadow on specific inputs to match
+    .bh-form-control {
+        border-color: @border-color;
+        &:focus {
+            border-color: @border-color;
+            .box-shadow(~"inset 0 0 2px @{border-color}");
+        }
+    }
+
+    & .bh-text-caption {
+        display: block;
+    }
+    & .bh-text-caption i {
+        font-size: 16px;
+        margin-right: 4px;
+    }
+}
+
+// Feedback states
+//.has-success {
+//  .form-control-validation(@state-success-text; @state-success-text; @state-success-bg);
+//}
+.bh-form-control-warning {
+    .form-control-validation(@brand-warning; @brand-warning; @brand-warning);
+}
+
+.bh-form-control-danger {
+    .form-control-validation(@brand-danger; @brand-danger; @brand-danger);
+}
+
+// Horizontal forms
+//
+// Horizontal forms are built on grid classes and allow you to create forms with
+// labels on the left and inputs on the right.
+
+.bh-form-horizontal,
+.bh-form-vertical {
+    //padding-bottom: @form-padding-bottom;
+    margin-bottom: @form-padding-bottom;
+}
+
+[bh-form-role=bhForm]{
+    & .bh-row{
+        //padding: 4px 0;
+        &:hover,
+        &.bh-active{
+            background-color: @primary-lv4;
+        }
+
+        & .bh-form-group{
+            margin-bottom: 0;
+        }
+    }
+
+    & .bh-form-label{
+        //padding: 6px 0 6px 16px;
+        padding: 4px 0 4px 16px;
+        line-height:20px;
+    }
+}
+
+.bh-form-horizontal{
+    & .bh-row{
+        padding: 4px 0;
+
+        & .bh-form-group{
+            margin-bottom: 0;
+        }
+    }
+}
+
+.bh-form-vertical,
+.bh-form-vertical.bh-form-lg {
+    & .bh-form-label {
+        padding: @form-vertical-label-padding;
+        margin-bottom: 4px;
+    }
+}
+
+.bh-form-lg {
+    & .bh-form-label {
+        font-size: @form-label-font-size-lg;
+        padding: @form-label-padding-lg;
+        margin-right: 0;
+    }
+    & .bh-form-control {
+        font-size: @input-font-size-large;
+        line-height: @input-line-height-large;
+        height: @input-height-large;
+    }
+
+    & .bh-form-group {
+        margin-bottom: @form-group-margin-bottom-lg;
+    }
+}
+
+.bh-form-inline {
+    .bh-row {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    .bh-form-group {
+        display: inline-block;
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+    // In navbar-form, allow folks to *not* use `.form-group`
+    .bh-form-control {
+        display: inline-block;
+        width: auto; // Prevent labels from stacking above inputs in `.form-group`
+        vertical-align: middle;
+    }
+
+    .bh-form-label {
+        margin-bottom: 0;
+        vertical-align: top;
+    }
+
+    // Remove default margin on radios/checkboxes that were used for stacking, and
+    // then undo the floating of radios and checkboxes to match.
+    .bh-radio,
+    .bh-checkbox {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+
+        label {
+            padding-left: 4px;
+        }
+    }
+    .bh-radio input[type="radio"],
+    .bh-checkbox input[type="checkbox"] {
+        position: relative;
+        margin-left: 0;
+    }
+}
+
+.bh-input-group {
+    display: table;
+    vertical-align: middle;
+
+    .bh-input-group-addon,
+    .bh-input-group-btn,
+    .bh-form-control {
+        width: 1%;
+        display: table-cell;
+    }
+    .bh-input-group-addon {
+        padding: 0 4px;
+        background-color: @gray-lv4;
+    }
+    .bh-form-control {
+        border-radius: @input-border-radius 0 0 @input-border-radius;
+    }
+    .bh-input-group-addon,
+    .bh-input-group-btn {
+        border-radius: 0 @input-border-radius @input-border-radius 0;
+    }
+}
+
+// Input groups need that 100% width though
+.bh-input-group > .bh-form-control {
+    width: 100%;
+}
+
+.bh-form-readonly {
+    .bh-form-block,
+    &.bh-form-block {
+        border-left: @form-readonly-border;
+        border-top: @form-readonly-border;
+        clear: both;
+        margin-bottom: 16px;
+
+        &:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+    }
+
+    .bh-form-group {
+        background: @form-readonly-label-bg;
+        border-right: @form-readonly-border;
+        border-bottom: @form-readonly-border;
+        margin-bottom: 0;
+        padding-left: 0;
+        padding-right: 0;
+
+        & > [class^=bh-col-md-] {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+
+    .bh-form-label {
+        border-right: @form-readonly-border;
+        padding: 6px 4px;
+    }
+
+    input {
+        background: #fff;
+    }
+
+    .bh-row {
+        padding: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .bh-form-static {
+        background: #fff;
+        height: @input-height-base;
+        line-height: @input-height-base;
+        //padding-left: @form-padding-base-horizontal;
+        text-align: left;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .bh-radio label{
+        margin: 2px 0 2px 0 !important;
+    }
+}
+
+.bh-form-group .bh-file-photo-block {
+    margin: 0;
+}
+
+.bh-form-group .bh-file-photo {
+    width: 88px;
+}
+
+.bh-form-readonly .bh-file-photo {
+    background: #fff;
+    width: 100%;
+    padding-top: 8px;
+}
+
+.bh-form-readonly .bh-file-photo-block {
+    margin-left: 8px;
+
+}
+
+.bh-form-readonly [xtype=uploadfile] {
+    background: #fff;
+    overflow: hidden;
+    line-height:28px;
+    padding: 0 8px;
+}
+.bh-form-readonly .bh-form-label {
+    border-right: none;
+}
+
+.bh-form-readonly .bh-form-label + div[class^=bh-col-]{
+    border-left: #ddd solid 1px;
+}
+
+.bh-form-group.bh-disabled {
+    .bh-form-label {
+        color: @gray-lv3;
+    }
+    .bh-file-upload {
+        color: @gray-lv3;
+        cursor: not-allowed;
+    }
+    .bh-table-form-icon {
+        color: @gray-lv3;
+    }
+}
+
+.bh-form-readonly {
+    &.bh-form-horizontal {
+        .bh-row {
+            padding: 0;
+        }
+
+        .bh-form-label {
+            padding: 4px 4px 4px 12px;
+            line-height: 20px;
+        }
+    }
+}
+
+body .bh-form-groupname {
+    font-size: 16px;
+    font-weight: bold;
+    border-left: 4px solid @brand-info;
+    padding-left: 8px;
+    line-height: 16px;
+    min-height: 0!important;
+    margin-bottom: 8px;
+    float: none!important;
+}
+
+.bh-form-S {
+    [xtype=uploadphoto] {
+        width: 88px;
+    }
+
+    .bh-form-label {
+        text-align: left;
+        padding-left: 0;
+    }
+
+    .bh-row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .bh-form-group.bh-required .bh-form-label:before {
+        left: 2px;
+    }
+
+    .jqx-validator-error-info {
+        padding: 0 12px;
+    }
+
+    .bh-form-vertical-switcher {
+        .bh-form-label {
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .bh-form-vertical-input-wrap {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+
+}
+
+.bh-form-group {
+    .jqx-text-area textarea {
+        height: 100%;
+    }
+
+    textarea.bh-form-control {
+        resize: none;
+    }
+}
+
+.bh-row {
+    .bh-form-placeholder {
+        line-height: 28px;
+    }
+}
+
+.bh-form-group, .bh-advancedQuery-groupList {
+    .bh-radio {
+        display: inline-block;
+    }
+}
+
+.bh-form-h-label {
+    width: 115px;
+    position: relative;
+    //white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// 控件背景颜色为白色
+.bh-form-group {
+    [xtype=text],
+    [xtype=date-local],
+    [xtype=date-ym],
+    [xtype=select],
+    [xtype=tree]{
+        background: #fff;
+    }
+
+    .bh-radio,
+    .bh-checkbox {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+        // 多选框与单选框 垂直位置调整
+        padding-top: 4px; 
+
+        label {
+            padding-left: 4px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+    }
+    .bh-radio input[type="radio"],
+    .bh-checkbox input[type="checkbox"] {
+        margin-left: 0;
+    }
+    .bh-checkbox input[type="checkbox"] {
+        position: relative;
+    }
+
+    &.bh-col-md-0.bh-form-placeholder {
+        display: none!important;
+    }
+}
+
+.bh-form-readonly-label {
+    width: 124px;
+    float: left;
+    word-break: break-all;
+    //white-space: nowrap;
+    //overflow: hidden;
+    //text-overflow: ellipsis;
+}
+
+.bh-form-readonly-input {
+    margin-left: 124px;
+    background: #fff;
+    border-left: @info-lv3 solid 1px;
+    position: relative;
+
+    input[readonly] {
+        background: #fff;
+    }
+
+    textarea {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}
+
+// 解决 下拉多选控件在 disable状态下 突显白色背景的问题
+.jqx-combobox-input {
+    background: transparent;
+}
+
+.bh-form-readonly-input .bh-form-control[readonly] {
+    color: @gray-lv1;
+}
+
+// 静态控件 文字行高为28
+.bh-form-group {
+    [xtype=static] {
+        line-height: 28px;
+    }
+}
+
+// 日期控件左边距
+[xtype^=date-] {
+    .jqx-input-content {
+        padding-left: 4px;
+    }
+}
+
+/********************表格表单混排*********************/
+.bh-table-form {
+    .bh-form-group {
+        background: @info-lv4;
+        border-right-color: @info-lv3;
+        border-bottom-color: @info-lv3;
+    }
+    .bh-form-block,
+    &.bh-form-block {
+        border-left-color: @info-lv3;
+        border-top-color: @info-lv3;
+    }
+
+    .bh-form-readonly-input {
+        padding: 2px!important;
+        input[type=text] {
+            padding-right: 18px;
+        }
+        [xtype=div] {
+            line-height: 28px;
+            min-height: 28px;
+        }
+    }
+
+    .bh-form-static {
+        background: @info-lv5;
+    }
+    
+    .bh-table-form-icon {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+    }
+    
+    
+    .form-validate-block{
+        position: relative;
+        padding: 0;
+        &.bh-actived .jqx-validator-error-info{
+            display: block!important;
+        }
+        .jqx-validator-error-info {
+            display: none!important;
+            position: absolute;
+            top: -26px;
+            background: @brand-warning;
+            color: white;
+            right: 0;
+            line-height: 12px;
+            padding: 2px 8px;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            &.bh-col-md-1,
+            &.bh-col-md-2,
+            &.bh-col-md-3,
+            &.bh-col-md-4,
+            &.bh-col-md-5,
+            &.bh-col-md-6,
+            &.bh-col-md-7,
+            &.bh-col-md-8,
+            &.bh-col-md-9, 
+            &.bh-col-md-10,
+            &.bh-col-md-11{
+                width: auto;
+            }
+        }
+        .jqx-validator-error-info:after {
+            content: "";
+            width: 0px;
+            height: 0px;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid @brand-warning;
+            font-size: 0px;
+            line-height: 0px;
+            position: absolute;
+            top: 21px;
+            right: 6px;
+        }
+        .bh-form-group.bh-required .bh-form-label:before {
+            left: 4px;
+        }
+    }
+
+    .bh-form-placeholder.bh-form-flow {
+        display: none;
+    }
+
+    // 混排表单 字段最小高度为0
+    .form-validate-block {
+        min-height: 0;
+    }
+}
+
+// changeLabelColor api style
+.bh-form-horizontal {
+    .form-validate-block {
+        &.bh-primary {
+            background: @primary-lv3;
+        }
+        &.bh-info {
+            background: @info-lv3;
+        }
+        &.bh-success {
+            background: @success-lv3;
+        }
+        &.bh-warning {
+            background: @warning-lv3;
+        }
+        &.bh-danger {
+            background: @danger-lv3;
+        }
+    }
+}
+
+
+.bh-table-form,
+.bh-form-readonly {
+    .bh-form-group {
+        &.bh-primary {
+            background: @primary-lv3;
+        }
+        &.bh-info {
+            background: @info-lv3;
+        }
+        &.bh-success {
+            background: @success-lv3;
+        }
+        &.bh-warning {
+            background: @warning-lv3;
+        }
+        &.bh-danger {
+            background: @danger-lv3;
+        }
+    }
+    // 只读表单内的上传控件， 占位符最小高度为28， 避免内容为空时 容器高度为0的情况
+    .bh-form-readonly-input {
+        div[xtype=uploadfile],
+        div[xtype=emapImageUpload],
+        div[xtype=uploadsingleimage] {
+            min-height: 28px;
+        }
+    }   
+}
+
+
+
+// datetime picker disabled style
+.bhtc-input-group {
+    &.bh-disabled {  
+        color: @gray-lv3;
+        input[type=text] {
+            color: @gray-lv3;
+        }
+    }
+}
+
+/********************** flex layout form ***********************/
+.bh-flex-form {  
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    flex-wrap: wrap;
+    .bh-form-group { 
+        float: none!important;
+         display: -webkit-flex;
+        display: -moz-flex;
+        display: -ms-flex;
+        display: flex;
+        flex-grow: 1;
+
+        .bh-form-label {
+            float: none;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .bh-form-readonly-input {
+            flex-grow: 1;
+            margin-left: 0;
+            display: flex;
+            align-items: center;
+            [xtype] {
+                flex-grow: 1;
+            }
+        }
+        .bh-form-static {
+            white-space: normal;
+            overflow: inherit;
+            height: auto;
+        }
+    }
+
+    &.bh-table-form {
+        .form-validate-block {
+            display: flex;
+            .bh-table-form-icon {
+                top: ~'calc(50% - 10px)'; 
+            }
+        }
+
+        
+    }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "bh-form",
+  "version": "1.0.0",
+  "description": "A form",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wisedu/bhForm.git"
+  },
+  "author": "zhroeqqtw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wisedu/bhForm/issues"
+  },
+  "homepage": "https://github.com/wisedu/bhForm#readme",
+  "devDependencies": {
+    "browser-sync": "^2.18.8",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-less": "^3.3.0"
+  }
+}
