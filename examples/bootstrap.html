@@ -1,15 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+  <link rel="stylesheet" href="../dist/bhForm.css">
 </head>
+
 <body>
-  
+  <div id="form"></div>
 </body>
+<script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="../dist/bhForm.js"></script>
+<script src="../src/component/bootstrap/bs-component.js"></script>
+<script>
+  $(function () {
+    WIS_EMAP_INPUT.import(bs);
+    var dataModel = [{
+        name: 'XM',
+        caption: '姓名',
+        xtype: 'bs-text',
+        validateEvent: 'blur',
+        require: true,
+        dataSize: 100,
+        checkSize: 30
+      },
+      {
+        name: 'NL',
+        caption: '年龄',
+        xtype: 'bs-text',
+        require: true,
+        dataSize: 100,
+        validateEvent: 'blur',
+        checkType: 'number',
+        checkSize: 30
+      },
+      {
+        name: 'XB',
+        caption: '性别',
+        xtype: 'bs-select',
+        optionData: [{
+            name: '男',
+            id: '1'
+          },
+          {
+            name: '女',
+            id: '0'
+          },
+          {
+            name: '未知',
+            id: '2'
+          }
+        ],
+        require: true,
+        dataSize: 100,
+        checkSize: 30
+      }
+    ]
+    $('#form').bhForm({
+      data: dataModel
+    })
+  })
+</script>
 
 </html>

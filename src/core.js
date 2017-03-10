@@ -305,6 +305,7 @@
                 }
             });
         } else {
+
             // 编辑表单
             $element.find('[xtype]').each(function () {
                 var name = $(this).data('name');
@@ -659,7 +660,7 @@
      * })
      */
     WIS_EMAP_INPUT.renderPlaceHolder = function (item, type, params) {
-        var attr = WIS_EMAP_SERV.getAttr(item, type);
+        var attr = WIS_EMAP_INPUT.getAttr(item, type);
         var pam = params || {};
         if (attr.inputReadonly && !WIS_EMAP_INPUT.component[attr.xtype]['readonly']) {
             if ($.inArray(attr.xtype, ['uploadfile', 'uploadsingleimage', 'uploadmuiltimage', 'cache-upload', 'direct-upload']) == -1) {
@@ -797,7 +798,7 @@
     
 
     WIS_EMAP_INPUT.component = (function () {
-        return $.extend({}, WIS_EMAP_INPUT.core, {});
+        return $.extend({}, WIS_EMAP_INPUT.core || {}, {});
     })();
 
     /**
@@ -935,6 +936,163 @@
         })
         return result;
     }
+
+    /**
+     * @method getAttr
+     * @description 根据模型项获取配置信息
+     * @param {Object} item - 模型JSON对象
+     * @param {String} type - 取值类型可选值 form grid search
+     * @returns {Object} - 模型配置信息
+     */
+    WIS_EMAP_INPUT.getAttr = function(item, type) {
+        if (!item.get) {
+            if (type === undefined) {
+                return console && console.error('数据模型缺少get方法或getAttr方法缺少type参数！');
+            }
+            item.get = function(field) {
+                if (this[type + "." + field] !== undefined && this[type + "." + field] !== "")
+                    return this[type + "." + field];
+                else
+                    return this[field];
+            }
+        }
+        return {
+            xtype: item.get("xtype") || 'text',
+            dataType: item.get("dataType"),
+            caption: item.get("caption"),
+            col: item.get("col") ? item.get("col") : 1,
+            url: item.get("url"),
+            name: item.get("name"),
+            hidden: item.get("hidden"),
+            placeholder: item.get("placeholder") ? item.get("placeholder") : '',
+            inputReadonly: item.get("readonly") ? true : false,
+            required: item.get("required") ? "bh-required" : "",
+            checkType: item.get("checkType") ? item.get("checkType") : false,
+            checkSize: item.get("checkSize"),
+            dataSize: item.get("dataSize") ? item.get("dataSize") : 99999,
+            checkExp: item.get("checkExp"),
+            JSONParam: item.get("JSONParam") ? item.get("JSONParam") : '{}',
+            format: item.get("format"),
+            defaultValue: item.get("defaultValue"),
+            optionData: item.get("optionData"),
+            quickSearch: item.get("quickSearch")
+        }
+    };
+
+    /**
+     * @method clone对象
+     * @description 深度克隆对象
+     * @param {Object} obj - 需要克隆的对象
+     * @returns {Object} - 克隆结果
+     * @example
+     * WIS_EMAP_SERV.cloneObj({
+     *  a: xx,
+     *  b: xx,
+     *  ...
+     * })
+     */
+    WIS_EMAP_INPUT.cloneObj = function(obj) {
+        var clone;
+        if (obj instanceof Array) {
+            clone = [];
+            for (var i = 0; i < obj.length; i++) {
+                clone.push(WIS_EMAP_INPUT.cloneObj(obj[i]));
+            }
+        } else {
+            clone = {};
+            for (var k in obj) {
+                if (typeof obj[k] == 'Object') {
+                    clone[k] = WIS_EMAP_INPUT.cloneObj(obj[k]);
+                } else {
+                    clone[k] = obj[k];
+                }
+            }
+        }
+        return clone;
+    };
+
+    /**
+     * @method convertModel
+     * @description 转换模型，给模型字段项加上get方法
+     * @param {Object} model - 数据模型
+     * @param {String} [type] - 类型 可选值  'form' 'grid' 'search'
+     * @example 
+     * WIS_EMAP_SERV.convertModel(dataModel);
+     */
+    WIS_EMAP_INPUT.convertModel = function(model, type) {
+        if (model === undefined || model == null) {
+            //getData = {code: 0,msg: "没有数据",models:[],datas:{}};
+            return undefined;
+        } else {
+            if (type === undefined)
+                return model.controls;
+            else {
+                if (model instanceof Array) {
+                    addGetMethod(model);
+                    return model;
+                } else {
+                    addGetMethod(model.controls);
+                    if (type == "search")
+                        return model;
+                    else
+                        return model.controls;
+                }
+            }
+        }
+
+        function addGetMethod(model_array) {
+            model_array.map(function(item) {
+                item.get = function(field) {
+                    if (this[type + "." + field] !== undefined && this[type + "." + field] !== "")
+                        return this[type + "." + field];
+                    else
+                        return this[field];
+                }
+            })
+        }
+    };    
+
+    WIS_EMAP_INPUT.import = function (components) {
+        WIS_EMAP_INPUT.component = WIS_EMAP_INPUT.component || {};
+
+        for (var k in components) {
+            if (WIS_EMAP_INPUT.component[k] !== undefined) {
+                console && console.error('组件' + k + '已存在');
+                continue;
+            }
+            WIS_EMAP_INPUT.component[k] = components[k];
+        }        
+
+    }
+
+     WIS_EMAP_INPUT.allValidateRules = (function () {
+        return $.extend({}, WIS_EMAP_INPUT.validateRules, {});
+    })();
+
+    /**
+     * @method extendValidateRule
+     * @description 扩展校验规则
+     * @param {Object} rule - 添加的校验规则
+     * @param {String} rule.name - 校验规则名称，使用时将其配置在字段模型的checkType属性上
+     * @param {RegExp} rule.regex - 校验规则的正则表达式，与func 二选一必填
+     * @param {Function} rule.func - 校验规则的处理函数，与func 二选一必填，带参数 value - 字段的值，函数返回Boolean，表示检验通过或者不通过；<br> 
+     * 若是联动校验， 则带参数为 value - 字段的值， filed - 联动字段name， element - 表单DOM
+     * @param {String} rule.alertText - 校验提示文字，其中使用 '* '字符串来代替字段的caption，<br>
+     * 若是联动校验， 使用'*1'代表当前字段caption，使用'*2'代表联动字段的caption
+     * @example 
+     * WIS_EMAP_INPUT.extendValidateRule({
+     *  name: 'test',
+     *  alertText: '* 不正确',
+     *  regex: /\d+/
+     * })
+     */
+    WIS_EMAP_INPUT.extendValidateRule = function (rule) {
+        if (WIS_EMAP_INPUT.allValidateRules[rule.name]) {
+            return console && console.error(rule.name + '校验规则已存在！');
+        }
+        WIS_EMAP_INPUT.allValidateRules[rule.name] = rule;
+    };
+
 
 
 })(window.WIS_EMAP_INPUT = window.WIS_EMAP_INPUT || {});

@@ -8,35 +8,45 @@ var fs = require('fs');
 // var plumber = require('gulp-plumber');
 // var os = require('os');
 var gLess = require('gulp-less');
+const babel = require('gulp-babel');
+const plumber = require('gulp-plumber');
+
+const cssPath = './src/layout/*.less';
+const jsPath = ['./src/validate/*.js', './src/*.js'];
 
 
 gulp.task('buildcss', function () {
-  gulp.watch('./src/layout/*.less', function () {
-    gulp.src('./src/layout/*.less')
-      .pipe(gLess())
-      .pipe(concat('bhForm.css'))
-      .pipe(gulp.dest('./dist/'))
-  })
+  gulp.src(cssPath)
+    .pipe(plumber())
+    .pipe(gLess())
+    .pipe(concat('bhForm.css'))
+    .pipe(gulp.dest('./dist/'))
 })
 
 gulp.task('buildjs', function () {
-  gulp.watch('./src/*.js', function () {
-    gulp.src('./src/*.js')
-      .pipe(concat('bhForm.js'))
-      .pipe(gulp.dest('./dist/'))
-  })
+  gulp.src(jsPath)
+    .pipe(plumber())
+    .pipe(concat('bhForm.js'))
+    .pipe(babel({
+      presets: ['es2015']
+    }))
+    .pipe(gulp.dest('./dist/'))
+})
+gulp.task('watch', ['buildcss', 'buildjs'], function () {
+  gulp.watch(cssPath, ['buildcss'])
+  gulp.watch(jsPath, ['buildjs'])
 })
 
 gulp.task('serve', function () {
   browserSync.init({
     server: {
-      baseDir: "./app"
+      baseDir: ""
     },
     open: false
   });
 });
 
-gulp.task('default', ['buildcss', 'buildjs', 'serve']);
+gulp.task('default', ['watch', 'serve']);
 
 /**** 
 

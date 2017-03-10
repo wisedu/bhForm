@@ -25,26 +25,18 @@
                 options.cols = options.rows;
             }
 
+
             //将插件的默认参数及用户定义的参数合并到一个新的obj里
             this.options = $.extend({}, $.fn.bhForm.defaults, options);
             if (!this.options || this.options == null || this.options == "") {
-                this.options = WIS_EMAP_SERV.getContextPath();
+                // this.options = WIS_EMAP_SERV.getContextPath();
             }
             //将dom jquery对象赋值给插件，方便后续调用
             this.$element = $(element);
 
             this.$element.attr("emap-role", "form");
+            WIS_EMAP_INPUT.convertModel(options.data, 'form');
 
-            this.$element.attr("emap", JSON.stringify({
-                "emap-url": WIS_EMAP_SERV.url,
-                "emap-name": WIS_EMAP_SERV.name,
-                "emap-app-name": WIS_EMAP_SERV.appName,
-                "emap-model-name": WIS_EMAP_SERV.modelName
-            }));
-            delete WIS_EMAP_SERV.url;
-            delete WIS_EMAP_SERV.name;
-            delete WIS_EMAP_SERV.appName;
-            delete WIS_EMAP_SERV.modelName;
             _renderFormWrap(this.$element, this.options);
             //初始化控件
             if (this.options.data) {
@@ -57,9 +49,11 @@
                     if (!$.isEmptyObject(_defaultValues)) WIS_EMAP_INPUT.formSetValue(this.$element, _defaultValues, this.options);
                     if (this.options.validate) {
                         // 初始化表单校验
-                        this.$element.emapValidate(options);
-                    }
-                }
+                        this.$element.bhValidate({    
+                            fieldModel: options.data
+                        }); 
+                    }  
+                } 
             }
             if (!this.options.readonly && this.options.data) {
                 // 初始化 下拉框联动
@@ -830,7 +824,7 @@
     };
 
     _getAttr = function (item) {
-        var attr = WIS_EMAP_SERV.getAttr(item);
+        var attr = WIS_EMAP_INPUT.getAttr(item);
         if (attr.defaultValue !== undefined) {
             _defaultValues[item.get("name")] = attr.defaultValue;
         }
@@ -879,12 +873,12 @@
             var formBlock = $(this).closest('[bh-form-role="groupContainer"]').find('.bh-form-block');
             if (self.data('collapse')) {
                 formBlock.slideDown(200, function () {
-                    WIS_EMAP_SERV._resetPageFooter();
+                    // WIS_EMAP_SERV._resetPageFooter();
                 });
                 self.data('collapse', false).text('收起');
             } else {
                 formBlock.slideUp(200, function () {
-                     WIS_EMAP_SERV._resetPageFooter();
+                    //  WIS_EMAP_SERV._resetPageFooter();
                 });
                 self.data('collapse', true).text('展开');
             }
@@ -893,7 +887,7 @@
 
     // 表单高级联动配置转换
     function getLinkageModel(model, options) {
-        return WIS_EMAP_SERV.cloneObj(model).filter(function (item) {
+        return WIS_EMAP_INPUT.cloneObj(model).filter(function (item) {
             var linkage = [];
             if (item.linkage && typeof item.linkage === 'string') {
                 try {

@@ -232,7 +232,7 @@
     function initItemValidateCondition(fieldItem, rules, element, options) {
         var itemConditions = [];
         // 必填校验
-        var attr = WIS_EMAP_SERV.getAttr(fieldItem);
+        var attr = WIS_EMAP_INPUT.getAttr(fieldItem);
         if (attr.required) {
             itemConditions.push({
                 name: fieldItem.name,
@@ -516,6 +516,7 @@
 
     // 校验单个字段
     function validateItem(fieldElement, options, autoFocus) {
+        debugger
         autoFocus = autoFocus === undefined ? false : autoFocus;
         var result = true;
         var name = fieldElement.data('name');
